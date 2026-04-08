@@ -5,6 +5,8 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -25,10 +27,14 @@ import frc.robot.utils.LimelightHelpers;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+  private static final String RED_ALLIANCE = "Red";
+  private static final String BLUE_ALLIANCE = "Blue";
+
   /// The robot's subsystems and commands are defined here...
   public final DriveSubsystem m_robotDrive = new DriveSubsystem();
   //public final LimelightSubsystem m_limelight = new LimelightSubsystem();
   public final DataLog m_datalog = new DataLog();
+  private final SendableChooser<String> m_allianceChooser = new SendableChooser<>();
 
   //private final PoseManager m_poseManager = new PoseManager(m_robotDrive);
 
@@ -38,6 +44,8 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    configureDashboard();
+
     // Configure the trigger bindings
     configureBindings();
 
@@ -52,6 +60,12 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                 true),
             m_robotDrive));
+  }
+
+  private void configureDashboard() {
+    m_allianceChooser.setDefaultOption(RED_ALLIANCE, RED_ALLIANCE);
+    m_allianceChooser.addOption(BLUE_ALLIANCE, BLUE_ALLIANCE);
+    SmartDashboard.putData("Alliance Start", m_allianceChooser);
   }
 
   /**
@@ -89,6 +103,11 @@ public class RobotContainer {
 
   public DriveSubsystem getDriveSubsystem() {
     return m_robotDrive;
+  }
+
+  public double getSelectedStartingHeadingDeg() {
+    String alliance = m_allianceChooser.getSelected();
+    return BLUE_ALLIANCE.equals(alliance) ? 180.0 : 0.0;
   }
 
   public void periodic() {

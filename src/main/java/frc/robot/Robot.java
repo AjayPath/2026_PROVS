@@ -19,6 +19,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
+  private Double lastAppliedStartingHeadingDeg = null;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -46,7 +47,7 @@ public void robotPeriodic() {
   // Give MegaTag2 the robot heading from the gyro/odometry
   LimelightHelpers.SetRobotOrientation(
       "limelight-naci",
-      -m_robotContainer.m_robotDrive.getHeading(),
+      m_robotContainer.m_robotDrive.getHeading(),
       0.0, 0.0, 0.0, 0.0, 0.0);
 
   var llMeasurement =
@@ -85,10 +86,14 @@ public void robotPeriodic() {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    applyDashboardStartingHeading();
+  }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    applyDashboardStartingHeading();
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
@@ -150,7 +155,22 @@ public void robotPeriodic() {
 
       // initialize only, do not zero yaw here
       drive.initializeGyro();
+      applyDashboardStartingHeading();
   }).start();
 }
+
+  private void applyDashboardStartingHeading() {
+    double selectedHeadingDeg = m_robotContainer.getSelectedStartingHeadingDeg();
+
+    if (lastAppliedStartingHeadingDeg != null
+        && Double.compare(lastAppliedStartingHeadingDeg, selectedHeadingDeg) == 0) {
+      return;
+    }
+
+    DriveSubsystem drive = m_robotContainer.getDriveSubsystem();
+    drive.setGyroYaw(selectedHeadingDeg);
+    drive.resetToOrigin();
+    lastAppliedStartingHeadingDeg = selectedHeadingDeg;
+  }
   
 }

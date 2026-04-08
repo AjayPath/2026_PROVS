@@ -55,7 +55,7 @@ public final class Constants {
 
     public static final int kGryoID = 24;
 
-    public static final boolean kGyroReversed = true;
+    public static final boolean kGyroReversed = false;
   }
 
   public static final class ModuleConstants {
