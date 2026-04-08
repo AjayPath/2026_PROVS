@@ -17,11 +17,11 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Variables;
 import frc.robot.utils.APOdometry;
 import frc.robot.utils.Calculations;
+import frc.robot.utils.LimelightToAPOTranslator;
 import frc.robot.utils.Pose;
 
 public class DriveSubsystem extends SubsystemBase {
 
-  // --- Swerve Modules ---
   private final MAXSwerveModule m_frontLeft = new MAXSwerveModule(
       DriveConstants.kFrontLeftDrivingCanId,
       DriveConstants.kFrontLeftTurningCanId,
@@ -42,10 +42,8 @@ public class DriveSubsystem extends SubsystemBase {
       DriveConstants.kRearRightTurningCanId,
       DriveConstants.kBackRightChassisAngularOffset);
 
-  // --- Sensors ---
   private final Pigeon2 m_gyro = new Pigeon2(DriveConstants.kGryoID);
 
-  // --- Odometry ---
   private final APOdometry m_odometry;
 
   public DriveSubsystem() {
@@ -58,44 +56,34 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {
-    m_odometry.update();
-    Pose currentPose = m_odometry.getPose();
-    Variables.drive.heading = getHeading();
-    Variables.drive.currentX = currentPose.getX();
-    Variables.drive.currentY = currentPose.getY();
-  }
+public void periodic() {
+  m_odometry.update();
 
-  // =========================================================
-  // POSE / ODOMETRY
-  // =========================================================
+  Pose currentPose = m_odometry.getPose();
 
-  /** Normalized pose (0–360°) */
+  Variables.drive.currentX = currentPose.getX();
+  Variables.drive.currentY = currentPose.getY();
+  Variables.drive.heading = getHeading();
+  Variables.drive.turnRate = getTurnRate();
+}
+
   public Pose getPose() {
     return m_odometry.getPose();
   }
 
-  /** Continuous pose (angle not wrapped) */
   public Pose getPoseContinuous() {
     return m_odometry.getPoseContinuous();
   }
 
-  /** Set robot pose explicitly */
   public void setPose(Pose pose) {
     m_odometry.setPose(pose);
   }
 
-  /** Reset robot to (0,0,current heading) */
   public void resetToOrigin() {
     m_odometry.reset();
   }
 
-  // =========================================================
-  // DRIVING
-  // =========================================================
-
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-
     double xSpeedDelivered = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double rotDelivered = rot * DriveConstants.kMaxAngularSpeed;
@@ -106,7 +94,7 @@ public class DriveSubsystem extends SubsystemBase {
                 xSpeedDelivered,
                 ySpeedDelivered,
                 rotDelivered,
-                Rotation2d.fromDegrees(getHeading())) // ✅ FIXED
+                Rotation2d.fromDegrees(getHeading()))
             : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
 
     SwerveDriveKinematics.desaturateWheelSpeeds(
@@ -118,7 +106,6 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearRight.setDesiredState(swerveModuleStates[3]);
   }
 
-  /** Direct control of module states (auto/pathing) */
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     SwerveDriveKinematics.desaturateWheelSpeeds(
         desiredStates, DriveConstants.kMaxSpeedMetersPerSecond);
@@ -129,7 +116,6 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearRight.setDesiredState(desiredStates[3]);
   }
 
-  /** Lock wheels in X formation */
   public void setX() {
     m_frontLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
     m_frontRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
@@ -137,7 +123,6 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
   }
 
-  /** Reset all drive encoders */
   public void resetEncoders() {
     m_frontLeft.resetEncoders();
     m_frontRight.resetEncoders();
@@ -145,39 +130,70 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearRight.resetEncoders();
   }
 
-  // =========================================================
-  // GYRO
-  // =========================================================
-
-  /** Current heading in degrees */
+  /**
+   * Base robot heading used everywhere outside APOdometry.
+   * Keep this convention aligned with your real robot tests.
+   */
   public double getHeading() {
-    //return Rotation2d.fromDegrees(m_gyro.getRotation2d().getDegrees()).getDegrees();
-    double heading = m_gyro.getRotation2d().getDegrees() *
-        (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+    double heading = m_gyro.getRotation2d().getDegrees()
+        * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
 
     return Calculations.normalizeAngle360(heading);
   }
 
-  /** Angular velocity (deg/sec) */
   public double getTurnRate() {
-    return m_gyro.getAngularVelocityZWorld().getValueAsDouble() *
-        (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+    return m_gyro.getAngularVelocityZWorld().getValueAsDouble()
+        * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
   }
 
-  /**
-   * Initialize gyro safely, then zero it
-   * (used at robot startup)
-   */
-  public void initializeAndZeroGyro() {
+  public void setGyroYaw(double yawDeg) {
+    double rawYaw = DriveConstants.kGyroReversed ? -yawDeg : yawDeg;
+    m_gyro.setYaw(rawYaw);
+  }
 
+  public double getVisionYaw() {
+  return m_gyro.getRotation2d().getDegrees()
+      * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+}
+
+public double getVisionYawRate() {
+  return m_gyro.getAngularVelocityZWorld().getValueAsDouble()
+      * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+}
+
+  /**
+   * Hardware init only.
+   * Do not force a field heading here.
+   */
+  public void initializeGyro() {
     Timer timer = new Timer();
     timer.start();
 
-    // Wait until gyro gives valid data or timeout
     while (Double.isNaN(m_gyro.getRotation2d().getDegrees()) && timer.get() < 2.0) {
       Timer.delay(0.01);
     }
-
-    m_gyro.setYaw(0);
   }
+
+  /**
+ * Sets odometry pose from Limelight, but rejects large jumps.
+ */
+/**
+ * Applies Limelight position as a translation correction to odometry.
+ * Keeps the current drivetrain heading and wheel state intact.
+ *
+ * This does NOT hard-reset odometry like setPose().
+ */
+public void correctPositionFromLimelight() {
+  if (!Variables.limelight.hasTarget) {
+    return;
+  }
+
+  Pose visionPose = LimelightToAPOTranslator.getTranslatedPose();
+  Pose currentPose = getPose();
+
+  double dx = visionPose.getX() - currentPose.getX();
+  double dy = visionPose.getY() - currentPose.getY();
+
+  m_odometry.translatePose(dx, dy);
+}
 }

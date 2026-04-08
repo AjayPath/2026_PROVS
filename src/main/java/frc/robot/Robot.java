@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.utils.LimelightHelpers;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -38,14 +39,49 @@ public class Robot extends TimedRobot {
    * SmartDashboard integrated updating.
    */
   @Override
-  public void robotPeriodic() {
-    // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
-    // commands, running already-scheduled commands, removing finished or interrupted commands,
-    // and running subsystem periodic() methods.  This must be called from the robot's periodic
-    // block in order for anything in the Command-based framework to work.
-    CommandScheduler.getInstance().run();
-    m_robotContainer.periodic();
+public void robotPeriodic() {
+  CommandScheduler.getInstance().run();
+  m_robotContainer.periodic();
+
+  // Give MegaTag2 the robot heading from the gyro/odometry
+  LimelightHelpers.SetRobotOrientation(
+      "limelight-naci",
+      -m_robotContainer.m_robotDrive.getHeading(),
+      0.0, 0.0, 0.0, 0.0, 0.0);
+
+  var llMeasurement =
+      LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-naci");
+
+  if (llMeasurement != null) {
+    Variables.limelight.hasTarget = llMeasurement.tagCount > 0;
+    Variables.limelight.tagCount = llMeasurement.tagCount;
+    Variables.limelight.latencyMs = llMeasurement.latency;
+    Variables.limelight.ll_x = llMeasurement.pose.getX();
+    Variables.limelight.ll_y = llMeasurement.pose.getY();
+    Variables.limelight.ll_rot = llMeasurement.pose.getRotation().getDegrees();
+  } else {
+    Variables.limelight.hasTarget = false;
+    Variables.limelight.tagCount = 0;
+    Variables.limelight.latencyMs = 0;
   }
+
+  // Conservative acceptance filter
+  boolean reject = false;
+
+  if (llMeasurement == null || llMeasurement.tagCount == 0) {
+    reject = true;
+  } else if (llMeasurement.tagCount == 1 && llMeasurement.rawFiducials.length == 1) {
+    if (llMeasurement.rawFiducials[0].ambiguity > 0.7) reject = true;
+    if (llMeasurement.rawFiducials[0].distToCamera > 3.0) reject = true;
+  }
+
+  // Do NOT hard set pose every frame unless you are initializing
+  if (!reject) {
+    // Apply accepted Limelight translation corrections into odometry.
+    // Heading remains gyro-driven.
+    m_robotContainer.m_robotDrive.correctPositionFromLimelight();
+  }
+}
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
@@ -103,19 +139,18 @@ public class Robot extends TimedRobot {
   public void simulationPeriodic() {}
 
   private void initializeGyro() {
-    DriveSubsystem drive = m_robotContainer.getDriveSubsystem();
-    
-    new Thread(() -> {
-        try {
-            // Wait for gyro to stabilize after power-on
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        
-        // Reset gyro to zero (includes wait for valid readings)
-        drive.initializeAndZeroGyro();
-    }).start();
-  }
+  DriveSubsystem drive = m_robotContainer.getDriveSubsystem();
+
+  new Thread(() -> {
+      try {
+          Thread.sleep(1000);
+      } catch (InterruptedException e) {
+          e.printStackTrace();
+      }
+
+      // initialize only, do not zero yaw here
+      drive.initializeGyro();
+  }).start();
+}
   
 }

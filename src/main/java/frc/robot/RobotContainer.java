@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -13,8 +14,9 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.DataLog;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.LimelightSubsystem;
-import frc.robot.utils.PoseManager;
+import frc.robot.utils.LimelightHelpers;
+//import frc.robot.subsystems.LimelightSubsystem;
+//import frc.robot.utils.PoseManager;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -25,14 +27,14 @@ import frc.robot.utils.PoseManager;
 public class RobotContainer {
   /// The robot's subsystems and commands are defined here...
   public final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  public final LimelightSubsystem m_limelight = new LimelightSubsystem();
+  //public final LimelightSubsystem m_limelight = new LimelightSubsystem();
   public final DataLog m_datalog = new DataLog();
 
-  private final PoseManager m_poseManager = new PoseManager(m_robotDrive);
+  //private final PoseManager m_poseManager = new PoseManager(m_robotDrive);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  XboxController m_driverController =
+      new XboxController(OperatorConstants.kDriverControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -67,6 +69,12 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
 
+    new Trigger(m_driverController::getLeftBumperButton)
+      .whileTrue(
+        new RunCommand(
+          () -> m_robotDrive.drive(LimelightHelpers.getTY("limelight-naci") * -0.1, -m_driverController.getLeftX(), LimelightHelpers.getTX("limelight-naci") * -0.05, false), m_robotDrive)
+      );
+
   }
 
   /**
@@ -84,6 +92,6 @@ public class RobotContainer {
   }
 
   public void periodic() {
-    m_poseManager.update();
+    //m_poseManager.update();
   }
 }

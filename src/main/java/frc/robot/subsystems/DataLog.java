@@ -1,25 +1,42 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Variables;
+import frc.robot.utils.LimelightToAPOTranslator;
+import frc.robot.utils.Pose;
 
 public class DataLog extends SubsystemBase {
-  /** Creates a new DataLog. */
   public DataLog() {}
 
   @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    SmartDashboard.putBoolean("AprilTag", Variables.limelight.hasTarget);
-    SmartDashboard.putNumber("TID", Variables.limelight.tid);
+public void periodic() {
+    SmartDashboard.putBoolean("LL/HasTarget", Variables.limelight.hasTarget);
+    SmartDashboard.putNumber("LL/TID", Variables.limelight.tid);
+    SmartDashboard.putNumber("LL/TagCount", Variables.limelight.tagCount);
+    SmartDashboard.putNumber("LL/LatencyMs", Variables.limelight.latencyMs);
 
-    SmartDashboard.putNumber("X", Variables.drive.currentX);
-    SmartDashboard.putNumber("Y", Variables.drive.currentY);
-    SmartDashboard.putNumber("Heading", Variables.drive.heading);
+    SmartDashboard.putNumber("LL/X", Variables.limelight.ll_x);
+    SmartDashboard.putNumber("LL/Y", Variables.limelight.ll_y);
+    SmartDashboard.putNumber("LL/Rot", Variables.limelight.ll_rot);
+
+    SmartDashboard.putNumber("Drive/X", Variables.drive.currentX);
+    SmartDashboard.putNumber("Drive/Y", Variables.drive.currentY);
+    SmartDashboard.putNumber("Drive/Heading", Variables.drive.heading);
+    SmartDashboard.putNumber("Drive/TurnRate", Variables.drive.turnRate);
+
+    Pose translatedPose = LimelightToAPOTranslator.getTranslatedPose();
+
+    SmartDashboard.putNumber("LL_APO/X", translatedPose.getX());
+    SmartDashboard.putNumber("LL_APO/Y", translatedPose.getY());
+    SmartDashboard.putNumber("LL_APO/Rot", translatedPose.getAngle());
+
+    SmartDashboard.putNumber("Error/X", Variables.limelight.ll_x - Variables.drive.currentX);
+    SmartDashboard.putNumber("Error/Y", Variables.limelight.ll_y - Variables.drive.currentY);
+    SmartDashboard.putNumber("Error/Rot", Variables.limelight.ll_rot - Variables.drive.heading);
+
+    SmartDashboard.putNumber("Error_APO/X", translatedPose.getX() - Variables.drive.currentX);
+    SmartDashboard.putNumber("Error_APO/Y", translatedPose.getY() - Variables.drive.currentY);
+    SmartDashboard.putNumber("Error_APO/Rot", translatedPose.getAngle() - Variables.drive.heading);
   }
 }

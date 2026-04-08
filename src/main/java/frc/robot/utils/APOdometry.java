@@ -321,6 +321,25 @@ public class APOdometry {
   }
 
   /**
+ * Translates the entire odometry solution by a field-relative offset.
+ * This does NOT rebuild wheel poses from scratch and does NOT reset wheel distances.
+ *
+ * Use this for vision-based position correction.
+ *
+ * @param dxMeters field-relative x shift
+ * @param dyMeters field-relative y shift
+ */
+public void translatePose(double dxMeters, double dyMeters) {
+  for (Pose modulePose : modulePoses) {
+    modulePose.setX(modulePose.getX() + dxMeters);
+    modulePose.setY(modulePose.getY() + dyMeters);
+  }
+
+  lastCenter.setX(lastCenter.getX() + dxMeters);
+  lastCenter.setY(lastCenter.getY() + dyMeters);
+}
+
+  /**
    * Logs wheel poses to console (for debugging).
    */
   public void logWheelPoses() {
