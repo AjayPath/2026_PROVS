@@ -108,5 +108,13 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+
+  public static final class TurnTargetConstants {
+    public static final double kRedHubX = -12.20;
+    public static final double kRedHubY = -4.0;
+
+    public static final double kBlueHubX = 1.0;
+    public static final double kBlueHubY = 1.0;
+  }
   
 }

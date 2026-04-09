@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Variables;
@@ -38,5 +40,16 @@ public void periodic() {
     SmartDashboard.putNumber("Error_APO/X", translatedPose.getX() - Variables.drive.currentX);
     SmartDashboard.putNumber("Error_APO/Y", translatedPose.getY() - Variables.drive.currentY);
     SmartDashboard.putNumber("Error_APO/Rot", translatedPose.getAngle() - Variables.drive.heading);
+
+    SmartDashboard.putNumber("TurnTarget/Red/X", Constants.TurnTargetConstants.kRedHubX);
+    SmartDashboard.putNumber("TurnTarget/Red/Y", Constants.TurnTargetConstants.kRedHubY);
+    SmartDashboard.putNumber("TurnTarget/Blue/X", Constants.TurnTargetConstants.kBlueHubX);
+    SmartDashboard.putNumber("TurnTarget/Blue/Y", Constants.TurnTargetConstants.kBlueHubY);
+
+    SmartDashboard.putString("TurnTarget/SelectedName", RobotContainer.getSelectedTurnTargetName());
+    SmartDashboard.putNumber("TurnTarget/SelectedX", RobotContainer.getSelectedTurnTargetX());
+    SmartDashboard.putNumber("TurnTarget/SelectedY", RobotContainer.getSelectedTurnTargetY());
+    SmartDashboard.putNumber("TurnTarget/TargetAngleDeg", Variables.drive.targetHubAngleDeg);
+    SmartDashboard.putNumber("TurnTarget/AngleErrorDeg", Variables.drive.targetHubAngleErrorDeg);
   }
 }

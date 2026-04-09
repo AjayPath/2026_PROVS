@@ -170,7 +170,7 @@ public double getVisionYawRate() {
     timer.start();
 
     while (Double.isNaN(m_gyro.getRotation2d().getDegrees()) && timer.get() < 2.0) {
-      Timer.delay(0.01);
+      Timer.delay(0.01); 
     }
   }
 

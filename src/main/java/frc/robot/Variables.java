@@ -25,5 +25,7 @@ public class Variables {
         public static double currentY = 0;
 
         public static double visionYaw = 0;
+        public static double targetHubAngleDeg = 0;
+        public static double targetHubAngleErrorDeg = 0;
     }
 }
