@@ -435,6 +435,116 @@ public class DriveToPoint extends Command {
   }
 
   /**
+   * Full constructor with independent controller P gains and per-axis max speeds.
+   *
+   * @param driveSubsystem drive subsystem
+   * @param targetX target x position (meters)
+   * @param targetY target y position (meters)
+   * @param targetAngle target heading (degrees)
+   * @param positionTolerance acceptable position error (meters)
+   * @param angleTolerance acceptable angle error (degrees)
+   * @param isContinuous true if this is a pass-through waypoint
+   * @param xP proportional gain for X controller
+   * @param yP proportional gain for Y controller
+   * @param rotP proportional gain for rotation controller
+   * @param xMaxSpeed max normalized X output (0-1)
+   * @param yMaxSpeed max normalized Y output (0-1)
+   * @param maxRotationSpeed max normalized turn output (0-1)
+   */
+  public DriveToPoint(
+      DriveSubsystem driveSubsystem,
+      double targetX,
+      double targetY,
+      double targetAngle,
+      double positionTolerance,
+      double angleTolerance,
+      boolean isContinuous,
+      double xP,
+      double yP,
+      double rotP,
+      double xMaxSpeed,
+      double yMaxSpeed,
+      double maxRotationSpeed) {
+
+    this.driveSubsystem = driveSubsystem;
+    this.targetPose = new Pose(targetX, targetY, targetAngle);
+    this.isContinuous = isContinuous;
+
+    // Looser tolerances for continuous points
+    if (isContinuous) {
+      this.positionTolerance = positionTolerance * 1.625;
+      this.angleTolerance = angleTolerance * 1.05;
+    } else {
+      this.positionTolerance = positionTolerance;
+      this.angleTolerance = angleTolerance;
+    }
+
+    this.xPID = new APPID(xP, kXI, kXD, this.positionTolerance);
+    this.xPID.setMaxOutput(xMaxSpeed);
+
+    this.yPID = new APPID(yP, kYI, kYD, this.positionTolerance);
+    this.yPID.setMaxOutput(yMaxSpeed);
+
+    this.turnPID = new APPID(rotP, kTurnI, kTurnD, this.angleTolerance);
+    this.turnPID.setMaxOutput(maxRotationSpeed);
+
+    addRequirements(driveSubsystem);
+  }
+
+  /**
+   * Full constructor with tunable shared P gain and per-axis max speeds.
+   *
+   * @param driveSubsystem drive subsystem
+   * @param targetX target x position (meters)
+   * @param targetY target y position (meters)
+   * @param targetAngle target heading (degrees)
+   * @param positionTolerance acceptable position error (meters)
+   * @param angleTolerance acceptable angle error (degrees)
+   * @param isContinuous true if this is a pass-through waypoint
+   * @param controllerP shared P gain used for X, Y, and turn controllers
+   * @param xMaxSpeed max normalized X output (0-1)
+   * @param yMaxSpeed max normalized Y output (0-1)
+   * @param maxRotationSpeed max normalized turn output (0-1)
+   */
+  public DriveToPoint(
+      DriveSubsystem driveSubsystem,
+      double targetX,
+      double targetY,
+      double targetAngle,
+      double positionTolerance,
+      double angleTolerance,
+      boolean isContinuous,
+      double controllerP,
+      double xMaxSpeed,
+      double yMaxSpeed,
+      double maxRotationSpeed) {
+
+    this.driveSubsystem = driveSubsystem;
+    this.targetPose = new Pose(targetX, targetY, targetAngle);
+    this.isContinuous = isContinuous;
+
+    // Looser tolerances for continuous points
+    if (isContinuous) {
+      this.positionTolerance = positionTolerance * 1.625;
+      this.angleTolerance = angleTolerance * 1.05;
+    } else {
+      this.positionTolerance = positionTolerance;
+      this.angleTolerance = angleTolerance;
+    }
+
+    this.xPID = new APPID(controllerP, kXI, kXD, this.positionTolerance);
+    this.xPID.setMaxOutput(xMaxSpeed);
+
+    this.yPID = new APPID(controllerP, kYI, kYD, this.positionTolerance);
+    this.yPID.setMaxOutput(yMaxSpeed);
+
+    this.turnPID = new APPID(controllerP, kTurnI, kTurnD, this.angleTolerance);
+    this.turnPID.setMaxOutput(maxRotationSpeed);
+
+    addRequirements(driveSubsystem);
+  }
+
+  /**
    * Constructor with default tolerances.
    */
   public DriveToPoint(
@@ -447,6 +557,64 @@ public class DriveToPoint extends Command {
   }
 
   /**
+   * Constructor with default tolerances and custom shared P / per-axis speeds.
+   */
+  public DriveToPoint(
+      DriveSubsystem driveSubsystem,
+      double targetX,
+      double targetY,
+      double targetAngle,
+      boolean isContinuous,
+      double controllerP,
+      double xMaxSpeed,
+      double yMaxSpeed,
+      double maxRotationSpeed) {
+    this(
+        driveSubsystem,
+        targetX,
+        targetY,
+        targetAngle,
+        0.1,
+        2.0,
+        isContinuous,
+        controllerP,
+        xMaxSpeed,
+        yMaxSpeed,
+        maxRotationSpeed);
+  }
+
+  /**
+   * Constructor with default tolerances and independent P / per-axis speeds.
+   */
+  public DriveToPoint(
+      DriveSubsystem driveSubsystem,
+      double targetX,
+      double targetY,
+      double targetAngle,
+      boolean isContinuous,
+      double xP,
+      double yP,
+      double rotP,
+      double xMaxSpeed,
+      double yMaxSpeed,
+      double maxRotationSpeed) {
+    this(
+        driveSubsystem,
+        targetX,
+        targetY,
+        targetAngle,
+        0.1,
+        2.0,
+        isContinuous,
+        xP,
+        yP,
+        rotP,
+        xMaxSpeed,
+        yMaxSpeed,
+        maxRotationSpeed);
+  }
+
+  /**
    * Normal precise-stop constructor.
    */
   public DriveToPoint(
@@ -455,6 +623,62 @@ public class DriveToPoint extends Command {
       double targetY,
       double targetAngle) {
     this(driveSubsystem, targetX, targetY, targetAngle, 0.1, 2.0, false);
+  }
+
+  /**
+   * Precise-stop constructor with custom shared P / per-axis speeds.
+   */
+  public DriveToPoint(
+      DriveSubsystem driveSubsystem,
+      double targetX,
+      double targetY,
+      double targetAngle,
+      double controllerP,
+      double xMaxSpeed,
+      double yMaxSpeed,
+      double maxRotationSpeed) {
+    this(
+        driveSubsystem,
+        targetX,
+        targetY,
+        targetAngle,
+        0.1,
+        2.0,
+        false,
+        controllerP,
+        xMaxSpeed,
+        yMaxSpeed,
+        maxRotationSpeed);
+  }
+
+  /**
+   * Precise-stop constructor with independent P / per-axis speeds.
+   */
+  public DriveToPoint(
+      DriveSubsystem driveSubsystem,
+      double targetX,
+      double targetY,
+      double targetAngle,
+      double xP,
+      double yP,
+      double rotP,
+      double xMaxSpeed,
+      double yMaxSpeed,
+      double maxRotationSpeed) {
+    this(
+        driveSubsystem,
+        targetX,
+        targetY,
+        targetAngle,
+        0.1,
+        2.0,
+        false,
+        xP,
+        yP,
+        rotP,
+        xMaxSpeed,
+        yMaxSpeed,
+        maxRotationSpeed);
   }
 
   // ===========================================================================================

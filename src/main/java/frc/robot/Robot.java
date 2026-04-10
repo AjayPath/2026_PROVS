@@ -16,6 +16,8 @@ import frc.robot.utils.LimelightHelpers;
  * this project, you must also update the Main.java file in the project.
  */
 public class Robot extends TimedRobot {
+  private static final String LIMELIGHT_NAME = "limelight-naci";
+
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
@@ -43,15 +45,17 @@ public class Robot extends TimedRobot {
 public void robotPeriodic() {
   CommandScheduler.getInstance().run();
   m_robotContainer.periodic();
+  double currentHeadingDeg = m_robotContainer.m_robotDrive.getHeading();
+  double currentYawRateDegPerSec = m_robotContainer.m_robotDrive.getTurnRate();
 
   // Give MegaTag2 the robot heading from the gyro/odometry
   LimelightHelpers.SetRobotOrientation(
-      "limelight-naci",
-      m_robotContainer.m_robotDrive.getHeading(),
-      0.0, 0.0, 0.0, 0.0, 0.0);
+      LIMELIGHT_NAME,
+      currentHeadingDeg,
+      currentYawRateDegPerSec, 0.0, 0.0, 0.0, 0.0);
 
   var llMeasurement =
-      LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-naci");
+      LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LIMELIGHT_NAME);
 
   if (llMeasurement != null) {
     Variables.limelight.hasTarget = llMeasurement.tagCount > 0;

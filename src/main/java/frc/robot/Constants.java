@@ -116,5 +116,11 @@ public final class Constants {
     public static final double kBlueHubX = 1.0;
     public static final double kBlueHubY = 1.0;
   }
+
+  public static class KrakenX60 {
+    public static final double kFreeSpeedRPM = 6000.0; // RPM
+    public static final double kFreeSpeedRPS = 100.0;
+  }
+
   
 }
