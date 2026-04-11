@@ -113,59 +113,62 @@ public class RobotContainer {
      new Trigger(m_driverController::getAButton)
       .whileTrue(new TurnToAngle(m_robotDrive, () -> Variables.drive.targetHubAngleDeg, 2.0));
 
-     new Trigger(m_driverController::getXButton)
+     new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.2)
       .whileTrue(new ShootSequence(s_shooterSubsystem, s_feederSubsystem, s_floorSubsystem, m_robotDrive, s_intakeSubsystem, s_pivotSubsystem));
 
-    new Trigger(m_driverController::getBButton)
-      .whileTrue(new RunIntake(s_intakeSubsystem , s_pivotSubsystem, 65, 105));
+    // new Trigger(m_driverController::getLeftBumperButton)
+    //   .whileTrue(new RunIntake(s_intakeSubsystem , s_pivotSubsystem, 65, 105));
+
+    new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.2)
+      .whileTrue(new RunIntake(s_intakeSubsystem, s_pivotSubsystem, 65, 108));
 
       new Trigger(m_driverController::getLeftBumperButton)
       .whileTrue(new SetPivotPosition(s_pivotSubsystem, 0));
 
-    new Trigger(m_driverController::getYButton)
-      .whileTrue(new SequentialCommandGroup(
-        // new DriveToPoint(m_robotDrive, -14.7, -0.7, 0, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.3, 0.3, 0.4),
-        // new DriveToPoint(m_robotDrive, -9.21, -0.72, 180, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.3, 0.3, 0.4),
-        // new DriveToPoint(m_robotDrive, -10.21, -2.25, 180, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.3, 0.3, 0.4),
-        // new DriveToPoint(m_robotDrive, -10.21, -6.1, 180, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.3, 0.3, 0.4),
-        // new DriveToPoint(m_robotDrive, -9, -7.4, 180, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.3, 0.3, 0.4),
-        // new DriveToPoint(m_robotDrive, -14.7, -7.4, 0, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.3, 0.3, 0.4),
-        // new DriveToPoint(m_robotDrive, -14.7, -4.6, 209, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.3, 0.3, 0.4)
+    // new Trigger(m_driverController::getYButton)
+    //   .whileTrue(new SequentialCommandGroup(
+    //     // new DriveToPoint(m_robotDrive, -14.7, -0.7, 0, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.3, 0.3, 0.4),
+    //     // new DriveToPoint(m_robotDrive, -9.21, -0.72, 180, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.3, 0.3, 0.4),
+    //     // new DriveToPoint(m_robotDrive, -10.21, -2.25, 180, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.3, 0.3, 0.4),
+    //     // new DriveToPoint(m_robotDrive, -10.21, -6.1, 180, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.3, 0.3, 0.4),
+    //     // new DriveToPoint(m_robotDrive, -9, -7.4, 180, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.3, 0.3, 0.4),
+    //     // new DriveToPoint(m_robotDrive, -14.7, -7.4, 0, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.3, 0.3, 0.4),
+    //     // new DriveToPoint(m_robotDrive, -14.7, -4.6, 209, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.3, 0.3, 0.4)
         
-        new DriveToPoint(m_robotDrive, -11.44, -0.7, 0, 0.05, 2.0, true, 0.8, 0.8, 0.02, 0.65, 0.65, 0.4),
-        new ParallelDeadlineGroup(
-          new DriveToPoint(m_robotDrive, -9.8, -0.7, 270, 0.1, 2.0, true, 0.8, 0.8, 0.02, 0.65, 0.65, 0.4),
-          new RunIntake(s_intakeSubsystem, s_pivotSubsystem, 80, 108)
-        ),
-        new ParallelDeadlineGroup(
-          new DriveToPoint(m_robotDrive, -9.8, -4, 270, 0.1, 2.0, true, 0.8, 0.8, 0.02, 0.65, 0.65, 0.4),
-          new RunIntake(s_intakeSubsystem, s_pivotSubsystem, 80, 108)
-        ),
-        new ParallelDeadlineGroup(
-          new DriveToPoint(m_robotDrive, -10.4, -2.5, 310, 0.1, 2.0, true, 0.8, 0.8, 0.02, 0.65, 0.65, 0.4),
-          new RunIntake(s_intakeSubsystem, s_pivotSubsystem, 80, 108)
-        ),
-        new DriveToPoint(m_robotDrive, -13.4, -2.35, 310, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.65, 0.65, 0.4),
-        new ShootSequence(s_shooterSubsystem, s_feederSubsystem, s_floorSubsystem, m_robotDrive, s_intakeSubsystem, s_pivotSubsystem).withTimeout(3),
-        new DriveToPoint(m_robotDrive, -14.4, -0.8, 0, 0.05, 2.0, true, 0.8, 0.8, 0.02, 0.65, 0.65, 0.4),
-        new ParallelDeadlineGroup(
-          new DriveToPoint(m_robotDrive, -10.4, -0.7, 0, 0.05, 2.0, true, 0.8, 0.8, 0.02, 0.65, 0.65, 0.4),
-          new RunIntake(s_intakeSubsystem, s_pivotSubsystem, 80, 108)
-        ),
-        new TurnToAngle(m_robotDrive, 270).withTimeout(0.5),
-        new ParallelDeadlineGroup(
-          new DriveToPoint(m_robotDrive, -10.4, -4, 270, 0.1, 2.0, true, 0.8, 0.8, 0.02, 0.65, 0.65, 0.45),
-          new RunIntake(s_intakeSubsystem, s_pivotSubsystem, 80, 108)
-        ),
-        new ParallelDeadlineGroup(
-          new DriveToPoint(m_robotDrive, -10.4, -2.5, 310, 0.1, 2.0, true, 0.8, 0.8, 0.02, 0.65, 0.65, 0.4),
-          new RunIntake(s_intakeSubsystem, s_pivotSubsystem, 80, 108)
-        ),
-        new DriveToPoint(m_robotDrive, -13.4, -2.35, 310, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.65, 0.65, 0.4),
-        new ShootSequence(s_shooterSubsystem, s_feederSubsystem, s_floorSubsystem, m_robotDrive, s_intakeSubsystem, s_pivotSubsystem).withTimeout(3)
-      )
+    //     new DriveToPoint(m_robotDrive, -11.44, -0.7, 0, 0.05, 2.0, true, 0.8, 0.8, 0.02, 0.65, 0.65, 0.4),
+    //     new ParallelDeadlineGroup(
+    //       new DriveToPoint(m_robotDrive, -9.8, -0.7, 270, 0.1, 2.0, true, 0.8, 0.8, 0.02, 0.65, 0.65, 0.4),
+    //       new RunIntake(s_intakeSubsystem, s_pivotSubsystem, 80, 108)
+    //     ),
+    //     new ParallelDeadlineGroup(
+    //       new DriveToPoint(m_robotDrive, -9.8, -4, 270, 0.1, 2.0, true, 0.8, 0.8, 0.02, 0.65, 0.65, 0.4),
+    //       new RunIntake(s_intakeSubsystem, s_pivotSubsystem, 80, 108)
+    //     ),
+    //     new ParallelDeadlineGroup(
+    //       new DriveToPoint(m_robotDrive, -10.4, -2.5, 310, 0.1, 2.0, true, 0.8, 0.8, 0.02, 0.65, 0.65, 0.4),
+    //       new RunIntake(s_intakeSubsystem, s_pivotSubsystem, 80, 108)
+    //     ),
+    //     new DriveToPoint(m_robotDrive, -13.4, -2.35, 310, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.65, 0.65, 0.4),
+    //     new ShootSequence(s_shooterSubsystem, s_feederSubsystem, s_floorSubsystem, m_robotDrive, s_intakeSubsystem, s_pivotSubsystem).withTimeout(3),
+    //     new DriveToPoint(m_robotDrive, -14.4, -0.8, 0, 0.05, 2.0, true, 0.8, 0.8, 0.02, 0.65, 0.65, 0.4),
+    //     new ParallelDeadlineGroup(
+    //       new DriveToPoint(m_robotDrive, -10.4, -0.7, 0, 0.05, 2.0, true, 0.8, 0.8, 0.02, 0.65, 0.65, 0.4),
+    //       new RunIntake(s_intakeSubsystem, s_pivotSubsystem, 80, 108)
+    //     ),
+    //     new TurnToAngle(m_robotDrive, 270).withTimeout(0.5),
+    //     new ParallelDeadlineGroup(
+    //       new DriveToPoint(m_robotDrive, -10.4, -4, 270, 0.1, 2.0, true, 0.8, 0.8, 0.02, 0.65, 0.65, 0.45),
+    //       new RunIntake(s_intakeSubsystem, s_pivotSubsystem, 80, 108)
+    //     ),
+    //     new ParallelDeadlineGroup(
+    //       new DriveToPoint(m_robotDrive, -10.4, -2.5, 310, 0.1, 2.0, true, 0.8, 0.8, 0.02, 0.65, 0.65, 0.4),
+    //       new RunIntake(s_intakeSubsystem, s_pivotSubsystem, 80, 108)
+    //     ),
+    //     new DriveToPoint(m_robotDrive, -13.4, -2.35, 310, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.65, 0.65, 0.4),
+    //     new ShootSequence(s_shooterSubsystem, s_feederSubsystem, s_floorSubsystem, m_robotDrive, s_intakeSubsystem, s_pivotSubsystem).withTimeout(3)
+    //   )
       
-      );
+    //   );
 
   }
 

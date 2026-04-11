@@ -14,7 +14,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.utils.APTree;
 
 public class ShootSequence extends SequentialCommandGroup {
-  private static final APTree SHOOTER_RPS_BY_DISTANCE = buildShooterRpsTable();
+  //private static final APTree SHOOTER_RPS_BY_DISTANCE = buildShooterRpsTable();
 
   public ShootSequence(
       ShooterSubsystem shooter,
@@ -32,11 +32,13 @@ public class ShootSequence extends SequentialCommandGroup {
 
         new ParallelCommandGroup(
           // Compute shot speed from straight-line distance to selected hub.
-          new RunCommand(
-              () -> Variables.shooterRPS = SHOOTER_RPS_BY_DISTANCE.GetValue(Variables.distanceMeters)),
+
+          // COMMENT THIS OUT IF IT DONT WORK
+          // new RunCommand(
+          //     () -> Variables.shooterRPS = SHOOTER_RPS_BY_DISTANCE.GetValue(Variables.distanceMeters)),
 
           // Shooter runs the entire time, never interrupted
-          new SetShooterRPS(shooter),
+          new SetShooterRPS(shooter, 67),
 
           new SequentialCommandGroup(
             // Wait until shooter is up to speed before feeding
@@ -54,16 +56,17 @@ public class ShootSequence extends SequentialCommandGroup {
       );
   }
 
-  private static APTree buildShooterRpsTable() {
-    APTree table = new APTree();
-    table.InsertValues(new double[][] {
-        // distance meters, shooter RPS
-        {1.5, 50.0},
-        {2.0, 53.0},
-        {2.5, 56.0},
-        {3.0, 59.0},
-        {3.5, 62.0}
-    });
-    return table;
-  }
+  // // UPDATE TABLES
+  // private static APTree buildShooterRpsTable() {
+  //   APTree table = new APTree();
+  //   table.InsertValues(new double[][] {
+  //       // distance meters, shooter RPS
+  //       {1.5, 50.0},
+  //       {2.0, 53.0},
+  //       {2.5, 56.0},
+  //       {3.0, 59.0},
+  //       {3.5, 62.0}
+  //   });
+  //   return table;
+  // }
 }
