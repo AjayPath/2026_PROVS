@@ -209,6 +209,7 @@ public class RobotContainer {
     Pose currentPose = m_robotDrive.getPose();
     double dx = getSelectedTurnTargetX() - currentPose.getX();
     double dy = getSelectedTurnTargetY() - currentPose.getY();
+    Variables.distanceMeters = Math.hypot(dx, dy);
 
     Variables.drive.targetHubAngleDeg =
         Calculations.normalizeAngle360(Math.toDegrees(Math.atan2(dy, dx)));
