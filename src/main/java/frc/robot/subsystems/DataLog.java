@@ -1,9 +1,9 @@
 package frc.robot.subsystems;
 
-import frc.robot.Constants;
-import frc.robot.RobotContainer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.Variables;
 import frc.robot.utils.LimelightToAPOTranslator;
 import frc.robot.utils.Pose;
@@ -51,5 +51,9 @@ public void periodic() {
     SmartDashboard.putNumber("TurnTarget/SelectedY", RobotContainer.getSelectedTurnTargetY());
     SmartDashboard.putNumber("TurnTarget/TargetAngleDeg", Variables.drive.targetHubAngleDeg);
     SmartDashboard.putNumber("TurnTarget/AngleErrorDeg", Variables.drive.targetHubAngleErrorDeg);
+
+    SmartDashboard.putNumber("Shooter RPS", Variables.shooter.shooterRPS);
+    SmartDashboard.putNumber("Pivot Position", Variables.pivot.pivotPosition);
+    SmartDashboard.putNumber("Distance From Hub", Variables.distanceMeters);
   }
 }

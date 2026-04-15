@@ -9,28 +9,23 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.DriveToPoint;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.SetPivotPosition;
 import frc.robot.commands.ShootSequence;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.subsystems.DataLog;
+import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.FloorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
-import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.utils.Calculations;
-import frc.robot.utils.LimelightHelpers;
 import frc.robot.utils.Pose;
 //import frc.robot.subsystems.LimelightSubsystem;
 //import frc.robot.utils.PoseManager;
@@ -120,10 +115,13 @@ public class RobotContainer {
     //   .whileTrue(new RunIntake(s_intakeSubsystem , s_pivotSubsystem, 65, 105));
 
     new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.2)
-      .whileTrue(new RunIntake(s_intakeSubsystem, s_pivotSubsystem, 65, 108));
+      .whileTrue(new RunIntake(s_intakeSubsystem, s_pivotSubsystem, 85, 140));
 
       new Trigger(m_driverController::getLeftBumperButton)
-      .whileTrue(new SetPivotPosition(s_pivotSubsystem, 0));
+      .whileTrue(new SetPivotPosition(s_pivotSubsystem, 20));
+
+      // new Trigger(m_driverController::getStartButton)
+      // .whileTrue(() -> m_robotDrive.resetGyro());
 
     // new Trigger(m_driverController::getYButton)
     //   .whileTrue(new SequentialCommandGroup(

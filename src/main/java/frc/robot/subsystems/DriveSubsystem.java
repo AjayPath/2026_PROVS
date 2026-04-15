@@ -151,6 +151,10 @@ public void periodic() {
     m_gyro.setYaw(rawYaw);
   }
 
+  public void resetGyro() {
+    setGyroYaw(0.0);
+  }
+
   public double getVisionYaw() {
   return m_gyro.getRotation2d().getDegrees()
       * (DriveConstants.kGyroReversed ? -1.0 : 1.0);

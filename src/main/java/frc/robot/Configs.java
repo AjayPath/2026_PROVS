@@ -90,7 +90,7 @@ public final class Configs {
             shooterConfig.Feedback.SensorToMechanismRatio = 1.0;
 
             // PID VALUES
-            shooterConfig.Slot0.kP = 0.2;
+            shooterConfig.Slot0.kP = 0.2; // 0.2
             shooterConfig.Slot0.kI = 0.0;
             shooterConfig.Slot0.kD = 0.0;
             shooterConfig.Slot0.kV = 12.0 / Constants.KrakenX60.kFreeSpeedRPS;
@@ -240,12 +240,12 @@ public final class Configs {
             pivotConfig.Slot0.kI = 0.0;
             pivotConfig.Slot0.kD = 0.0;
 
-            pivotConfig.MotionMagic.MotionMagicCruiseVelocity = 80;
+            pivotConfig.MotionMagic.MotionMagicCruiseVelocity = 100;
             pivotConfig.MotionMagic.MotionMagicAcceleration = 160;
             pivotConfig.MotionMagic.MotionMagicJerk = 1600;
 
             pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-            pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 120.0 / 360.0 * PIVOT_GEAR_RATIO;
+            pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 155.0 / 360.0 * PIVOT_GEAR_RATIO;
             pivotConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
             pivotConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0;
 
