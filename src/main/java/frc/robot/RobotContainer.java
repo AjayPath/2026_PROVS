@@ -9,19 +9,17 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.DriveToPoint;
+import frc.robot.commands.PassSequence;
+import frc.robot.commands.Purge;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.SetPivotPosition;
 import frc.robot.commands.ShootAndMoveSequence;
-import frc.robot.commands.ShootSequence;
-import frc.robot.commands.TurnToAngle;
+import frc.robot.commands.StaticShootSequence;
 import frc.robot.subsystems.DataLog;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
@@ -80,7 +78,7 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                true),
+                false),
             m_robotDrive));
   }
 
@@ -104,12 +102,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
 
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
-
-     new Trigger(m_driverController::getAButton)
+     new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.2)
       .whileTrue(new ShootAndMoveSequence(s_shooterSubsystem, s_feederSubsystem, s_floorSubsystem,
           m_robotDrive,
           s_intakeSubsystem,
@@ -117,69 +111,24 @@ public class RobotContainer {
           m_driverController::getLeftY,
           m_driverController::getLeftX));
 
-     new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.2)
-      .whileTrue(new ShootSequence(s_shooterSubsystem, s_feederSubsystem, s_floorSubsystem, m_robotDrive, s_intakeSubsystem, s_pivotSubsystem));
+      new Trigger(m_driverController::getRightBumperButton)
+      .whileTrue(new PassSequence(s_shooterSubsystem, s_feederSubsystem, s_floorSubsystem, m_robotDrive, s_intakeSubsystem, s_pivotSubsystem, 90));
 
-    // new Trigger(m_driverController::getLeftBumperButton)
-    //   .whileTrue(new RunIntake(s_intakeSubsystem , s_pivotSubsystem, 65, 105));
+     new Trigger(m_driverController::getYButton)
+      .whileTrue(new Purge(s_feederSubsystem, s_shooterSubsystem, s_intakeSubsystem, s_floorSubsystem));
+
+     new Trigger(m_driverController::getAButton)
+      .whileTrue(new StaticShootSequence(s_shooterSubsystem, s_feederSubsystem, s_floorSubsystem, m_robotDrive, s_intakeSubsystem, s_pivotSubsystem));
 
     new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.2)
-      .whileTrue(new RunIntake(s_intakeSubsystem, s_pivotSubsystem, 85, 115));
+      .whileTrue(new RunIntake(s_intakeSubsystem, s_pivotSubsystem, 85, 114));
 
       new Trigger(m_driverController::getLeftBumperButton)
-      .whileTrue(new SetPivotPosition(s_pivotSubsystem, 20));
-
-      // new Trigger(m_driverController::getStartButton)
-      // .whileTrue(() -> m_robotDrive.resetGyro());
-
-    new Trigger(m_driverController::getYButton)
-      .whileTrue(new SequentialCommandGroup(
-    //     // new DriveToPoint(m_robotDrive, -14.7, -0.7, 0, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.3, 0.3, 0.4),
-    //     // new DriveToPoint(m_robotDrive, -9.21, -0.72, 180, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.3, 0.3, 0.4),
-    //     // new DriveToPoint(m_robotDrive, -10.21, -2.25, 180, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.3, 0.3, 0.4),
-    //     // new DriveToPoint(m_robotDrive, -10.21, -6.1, 180, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.3, 0.3, 0.4),
-    //     // new DriveToPoint(m_robotDrive, -9, -7.4, 180, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.3, 0.3, 0.4),
-    //     // new DriveToPoint(m_robotDrive, -14.7, -7.4, 0, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.3, 0.3, 0.4),
-    //     // new DriveToPoint(m_robotDrive, -14.7, -4.6, 209, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.3, 0.3, 0.4)
-        
-        new DriveToPoint(m_robotDrive, -11, -0.7, 0, 0.1, 2.0, true, 0.8, 0.8, 0.02, 0.65, 0.65, 0.4),
-        new ParallelDeadlineGroup(
-          new DriveToPoint(m_robotDrive, -9.8, -0.7, 270, 0.1, 2.0, true, 0.8, 0.8, 0.02, 0.65, 0.65, 0.4),
-          new RunIntake(s_intakeSubsystem, s_pivotSubsystem, 80, 108)
-        ),
-        new ParallelDeadlineGroup(
-          new DriveToPoint(m_robotDrive, -9.8, -4, 270, 0.1, 2.0, true, 0.8, 0.8, 0.02, 0.65, 0.65, 0.4),
-          new RunIntake(s_intakeSubsystem, s_pivotSubsystem, 80, 108)
-        ),
-        new ParallelDeadlineGroup(
-          new DriveToPoint(m_robotDrive, -10.4, -2.5, 310, 0.1, 2.0, true, 0.8, 0.8, 0.02, 0.65, 0.65, 0.4),
-          new RunIntake(s_intakeSubsystem, s_pivotSubsystem, 80, 108)
-        ),
-        new DriveToPoint(m_robotDrive, -13.4, -2.35, 310, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.65, 0.65, 0.4),
-        new ShootSequence(s_shooterSubsystem, s_feederSubsystem, s_floorSubsystem, m_robotDrive, s_intakeSubsystem, s_pivotSubsystem).withTimeout(3),
-        new DriveToPoint(m_robotDrive, -13.4, -0.7, 0, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.65, 0.65, 0.4),
-        new ParallelDeadlineGroup(
-          new DriveToPoint(m_robotDrive, -10.4, -0.7, 0, 0.05, 2.0, true, 0.8, 0.8, 0.02, 0.65, 0.65, 0.4),
-          new RunIntake(s_intakeSubsystem, s_pivotSubsystem, 80, 108)
-        ),
-        new TurnToAngle(m_robotDrive, 270).withTimeout(0.5),
-        new ParallelDeadlineGroup(
-          new DriveToPoint(m_robotDrive, -10.4, -4, 270, 0.1, 2.0, true, 0.8, 0.8, 0.02, 0.65, 0.65, 0.45),
-          new RunIntake(s_intakeSubsystem, s_pivotSubsystem, 80, 108)
-        ),
-        new ParallelDeadlineGroup(
-          new DriveToPoint(m_robotDrive, -10.4, -2.5, 310, 0.1, 2.0, true, 0.8, 0.8, 0.02, 0.65, 0.65, 0.4),
-          new RunIntake(s_intakeSubsystem, s_pivotSubsystem, 80, 108)
-        ),
-        new DriveToPoint(m_robotDrive, -13.4, -2.35, 310, 0.05, 2.0, false, 0.8, 0.8, 0.02, 0.65, 0.65, 0.4),
-        new ShootSequence(s_shooterSubsystem, s_feederSubsystem, s_floorSubsystem, m_robotDrive, s_intakeSubsystem, s_pivotSubsystem).withTimeout(3)
-      )
-      
-      );
+      .whileTrue(new SetPivotPosition(s_pivotSubsystem, 10));
 
   }
 
-  /**
+/**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
@@ -227,6 +176,5 @@ public class RobotContainer {
         Calculations.shortestAngularDistance(
             Variables.drive.targetHubAngleDeg,
             Calculations.normalizeAngle360(currentPose.getAngle()));
-    //m_poseManager.update();
   }
 }

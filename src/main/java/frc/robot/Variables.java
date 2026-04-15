@@ -47,8 +47,8 @@ public class Variables {
         public static double targetHubAngleErrorDeg = 0;
     }
 
-        public static double distanceMeters = 0;
-        public static double turnAngle = 0;
-        public static double shooterRPS = 0;
-        public static double middleRPS = 0;
+    public static double distanceMeters = 0;
+    public static double turnAngle = 0;
+    public static double shooterRPS = 0;
+    public static double middleRPS = 0;
 }
