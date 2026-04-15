@@ -42,7 +42,7 @@ public class RunIntake extends Command {
   @Override
   public void end(boolean interrupted) {
     Variables.intake.intakeRPS = 0;
-    //Variables.pivot.pivotPosition = 105;
+    Variables.pivot.pivotPosition = 107;
   }
 
   // Returns true when the command should end.

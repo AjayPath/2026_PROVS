@@ -66,7 +66,8 @@ public class ShootSequence extends SequentialCommandGroup {
         {2.0, 60.0},
         {2.5, 65.0},
         {3, 70},
-        {3.7, 85}
+        {3.7, 85},
+        {4.2, 93}
     });
     return table;
   }
