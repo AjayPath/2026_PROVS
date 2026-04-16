@@ -113,7 +113,7 @@ public final class Constants {
     public static final double kRedHubX = -12.20;
     public static final double kRedHubY = -4.0;
 
-    public static final double kBlueHubX = -6.0;
+    public static final double kBlueHubX = -4.25;
     public static final double kBlueHubY = -4.0;
   }
 

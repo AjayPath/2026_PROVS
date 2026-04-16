@@ -3,13 +3,25 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
 import frc.robot.Variables;
 import frc.robot.utils.LimelightToAPOTranslator;
 import frc.robot.utils.Pose;
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 public class DataLog extends SubsystemBase {
-  public DataLog() {}
+  private final Supplier<String> selectedTurnTargetNameSupplier;
+  private final DoubleSupplier selectedTurnTargetXSupplier;
+  private final DoubleSupplier selectedTurnTargetYSupplier;
+
+  public DataLog(
+      Supplier<String> selectedTurnTargetNameSupplier,
+      DoubleSupplier selectedTurnTargetXSupplier,
+      DoubleSupplier selectedTurnTargetYSupplier) {
+    this.selectedTurnTargetNameSupplier = selectedTurnTargetNameSupplier;
+    this.selectedTurnTargetXSupplier = selectedTurnTargetXSupplier;
+    this.selectedTurnTargetYSupplier = selectedTurnTargetYSupplier;
+  }
 
   @Override
 public void periodic() {
@@ -46,9 +58,9 @@ public void periodic() {
     SmartDashboard.putNumber("TurnTarget/Blue/X", Constants.TurnTargetConstants.kBlueHubX);
     SmartDashboard.putNumber("TurnTarget/Blue/Y", Constants.TurnTargetConstants.kBlueHubY);
 
-    SmartDashboard.putString("TurnTarget/SelectedName", RobotContainer.getSelectedTurnTargetName());
-    SmartDashboard.putNumber("TurnTarget/SelectedX", RobotContainer.getSelectedTurnTargetX());
-    SmartDashboard.putNumber("TurnTarget/SelectedY", RobotContainer.getSelectedTurnTargetY());
+    SmartDashboard.putString("TurnTarget/SelectedName", selectedTurnTargetNameSupplier.get());
+    SmartDashboard.putNumber("TurnTarget/SelectedX", selectedTurnTargetXSupplier.getAsDouble());
+    SmartDashboard.putNumber("TurnTarget/SelectedY", selectedTurnTargetYSupplier.getAsDouble());
     SmartDashboard.putNumber("TurnTarget/TargetAngleDeg", Variables.drive.targetHubAngleDeg);
     SmartDashboard.putNumber("TurnTarget/AngleErrorDeg", Variables.drive.targetHubAngleErrorDeg);
 

@@ -47,7 +47,7 @@ public class TurnToAngle extends Command {
   }
 
   public TurnToAngle(DriveSubsystem driveSubsystem, double targetAngleDeg) {
-    this(driveSubsystem, () -> targetAngleDeg, 2.0, false, () -> 0.0, () -> 0.0, 0.0);
+    this(driveSubsystem, () -> targetAngleDeg, 1.0, false, () -> 0.0, () -> 0.0, 0.0);
   }
 
   public TurnToAngle(DriveSubsystem driveSubsystem, double targetAngleDeg, double angleToleranceDeg) {
