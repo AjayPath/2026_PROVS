@@ -49,7 +49,7 @@ public class ShootSequence extends SequentialCommandGroup {
             new ParallelCommandGroup(
               new SetFloorRPS(floor, 40), //40
               new SetFeederRPS(feeder, 90), //90
-                new RunIntake(intake, pivot,30, 70)
+                new RunIntake(intake, pivot,30, 60)
             )
           )
         )

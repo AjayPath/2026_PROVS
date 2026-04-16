@@ -41,7 +41,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public boolean atTargetSpeed () {
-    return (Math.abs(getRightShooterSpeed() - Variables.shooter.shooterRPS) < 1) && (Math.abs(getLeftShooterSpeed() - Variables.shooter.shooterRPS) < 1);
+    return (Math.abs(getRightShooterSpeed() - Variables.shooter.shooterRPS) < 2) && (Math.abs(getLeftShooterSpeed() - Variables.shooter.shooterRPS) < 2);
   }
 
   @Override

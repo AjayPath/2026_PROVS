@@ -2,7 +2,9 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.utils.APPID;
 import frc.robot.utils.Calculations;
@@ -17,6 +19,9 @@ public class TurnToAngle extends Command {
   private final APPID turnPID;
   private final DoubleSupplier requestedAngleSupplier;
   private final boolean isRelative;
+  private final DoubleSupplier forwardSupplier;
+  private final DoubleSupplier strafeSupplier;
+  private final double translationScale;
 
   private double targetAngleDeg;
 
@@ -24,10 +29,16 @@ public class TurnToAngle extends Command {
       DriveSubsystem driveSubsystem,
       DoubleSupplier requestedAngleSupplier,
       double angleToleranceDeg,
-      boolean isRelative) {
+      boolean isRelative,
+      DoubleSupplier forwardSupplier,
+      DoubleSupplier strafeSupplier,
+      double translationScale) {
     this.driveSubsystem = driveSubsystem;
     this.requestedAngleSupplier = requestedAngleSupplier;
     this.isRelative = isRelative;
+    this.forwardSupplier = forwardSupplier;
+    this.strafeSupplier = strafeSupplier;
+    this.translationScale = MathUtil.clamp(translationScale, 0.0, 1.0);
 
     turnPID = new APPID(kTurnP, kTurnI, kTurnD, angleToleranceDeg);
     turnPID.setMaxOutput(kMaxRot);
@@ -36,29 +47,48 @@ public class TurnToAngle extends Command {
   }
 
   public TurnToAngle(DriveSubsystem driveSubsystem, double targetAngleDeg) {
-    this(driveSubsystem, () -> targetAngleDeg, 2.0, false);
+    this(driveSubsystem, () -> targetAngleDeg, 2.0, false, () -> 0.0, () -> 0.0, 0.0);
   }
 
   public TurnToAngle(DriveSubsystem driveSubsystem, double targetAngleDeg, double angleToleranceDeg) {
-    this(driveSubsystem, () -> targetAngleDeg, angleToleranceDeg, false);
+    this(driveSubsystem, () -> targetAngleDeg, angleToleranceDeg, false, () -> 0.0, () -> 0.0, 0.0);
   }
 
   public TurnToAngle(
       DriveSubsystem driveSubsystem,
       DoubleSupplier targetAngleSupplier,
       double angleToleranceDeg) {
-    this(driveSubsystem, targetAngleSupplier, angleToleranceDeg, false);
+    this(driveSubsystem, targetAngleSupplier, angleToleranceDeg, false, () -> 0.0, () -> 0.0, 0.0);
+  }
+
+  public TurnToAngle(
+      DriveSubsystem driveSubsystem,
+      DoubleSupplier targetAngleSupplier,
+      double angleToleranceDeg,
+      DoubleSupplier forwardSupplier,
+      DoubleSupplier strafeSupplier,
+      double translationScale) {
+    this(
+        driveSubsystem,
+        targetAngleSupplier,
+        angleToleranceDeg,
+        false,
+        forwardSupplier,
+        strafeSupplier,
+        translationScale);
   }
 
   public static TurnToAngle relative(DriveSubsystem driveSubsystem, double deltaAngleDeg) {
-    return new TurnToAngle(driveSubsystem, () -> deltaAngleDeg, 2.0, true);
+    return new TurnToAngle(
+        driveSubsystem, () -> deltaAngleDeg, 2.0, true, () -> 0.0, () -> 0.0, 0.0);
   }
 
   public static TurnToAngle relative(
       DriveSubsystem driveSubsystem,
       double deltaAngleDeg,
       double toleranceDeg) {
-    return new TurnToAngle(driveSubsystem, () -> deltaAngleDeg, toleranceDeg, true);
+    return new TurnToAngle(
+        driveSubsystem, () -> deltaAngleDeg, toleranceDeg, true, () -> 0.0, () -> 0.0, 0.0);
   }
 
   @Override
@@ -81,8 +111,14 @@ public class TurnToAngle extends Command {
 
     turnPID.setDesiredValue(0.0);
     double rotCmd = turnPID.calculate(-angleError);
+    double xCmd =
+        -MathUtil.applyDeadband(forwardSupplier.getAsDouble(), OIConstants.kDriveDeadband)
+            * translationScale;
+    double yCmd =
+        -MathUtil.applyDeadband(strafeSupplier.getAsDouble(), OIConstants.kDriveDeadband)
+            * translationScale;
 
-    driveSubsystem.drive(0.0, 0.0, rotCmd, true);
+    driveSubsystem.drive(xCmd, yCmd, rotCmd, true);
   }
 
   @Override

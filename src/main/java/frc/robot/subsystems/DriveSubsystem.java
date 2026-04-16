@@ -19,6 +19,7 @@ import frc.robot.utils.APOdometry;
 import frc.robot.utils.Calculations;
 import frc.robot.utils.LimelightToAPOTranslator;
 import frc.robot.utils.Pose;
+import frc.robot.utils.Vector;
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -73,6 +74,11 @@ public void periodic() {
 
   public Pose getPoseContinuous() {
     return m_odometry.getPoseContinuous();
+  }
+
+  public Vector getFieldVelocity() {
+    Vector velocity = m_odometry.getVelocity();
+    return new Vector(velocity.getX(), velocity.getY());
   }
 
   public void setPose(Pose pose) {

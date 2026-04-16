@@ -21,6 +21,8 @@ public class PassSequence extends SequentialCommandGroup {
       double shooterRPS
   ) {
     addCommands(
+
+    new ParallelCommandGroup(
       new TurnToAngle(drive, 180),
 
         new ParallelCommandGroup(
@@ -36,7 +38,7 @@ public class PassSequence extends SequentialCommandGroup {
             new SetFloorRPS(floor, 40),
               new SetFeederRPS(feeder, 90),
               new RunIntake(intake, pivot,30, 70)
-            )
+            ))
           )
         )
       // )

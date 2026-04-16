@@ -89,7 +89,47 @@ public class DriveToPoint extends Command {
       double positionTolerance,
       double angleTolerance,
       boolean isContinuous) {
+    this(
+        driveSubsystem,
+        targetX,
+        targetY,
+        targetAngle,
+        positionTolerance,
+        angleTolerance,
+        isContinuous,
+        kXP,
+        kXMaxSpeed,
+        kYP,
+        kYMaxSpeed);
+  }
 
+  /**
+   * Full constructor with per-command translation PID and speed tuning.
+   *
+   * @param driveSubsystem drive subsystem
+   * @param targetX target x position (meters)
+   * @param targetY target y position (meters)
+   * @param targetAngle target heading (degrees)
+   * @param positionTolerance acceptable position error (meters)
+   * @param angleTolerance acceptable angle error (degrees)
+   * @param isContinuous true if this is a pass-through waypoint
+   * @param xP x-axis proportional gain
+   * @param xMaxSpeed x-axis maximum output/speed
+   * @param yP y-axis proportional gain
+   * @param yMaxSpeed y-axis maximum output/speed
+   */
+  public DriveToPoint(
+      DriveSubsystem driveSubsystem,
+      double targetX,
+      double targetY,
+      double targetAngle,
+      double positionTolerance,
+      double angleTolerance,
+      boolean isContinuous,
+      double xP,
+      double xMaxSpeed,
+      double yP,
+      double yMaxSpeed) {
     this.driveSubsystem = driveSubsystem;
     this.targetPose = new Pose(targetX, targetY, targetAngle);
     this.isContinuous = isContinuous;
@@ -103,17 +143,112 @@ public class DriveToPoint extends Command {
       this.angleTolerance = angleTolerance;
     }
 
-    this.xPID = new APPID(kXP, kXI, kXD, this.positionTolerance);
-    this.xPID.setMaxOutput(kXMaxSpeed);
+    this.xPID = new APPID(xP, kXI, kXD, this.positionTolerance);
+    this.xPID.setMaxOutput(xMaxSpeed);
 
-    this.yPID = new APPID(kYP, kYI, kYD, this.positionTolerance);
-    this.yPID.setMaxOutput(kYMaxSpeed);
+    this.yPID = new APPID(yP, kYI, kYD, this.positionTolerance);
+    this.yPID.setMaxOutput(yMaxSpeed);
 
     this.turnPID = new APPID(kTurnP, kTurnI, kTurnD, this.angleTolerance);
     this.turnPID.setMaxOutput(kMaxRotationSpeed);
 
     addRequirements(driveSubsystem);
   }
+
+  /**
+   * Constructor with default tolerances and per-command translation PID/speed tuning.
+   */
+  public DriveToPoint(
+      DriveSubsystem driveSubsystem,
+      double targetX,
+      double targetY,
+      double targetAngle,
+      boolean isContinuous,
+      double xP,
+      double xMaxSpeed,
+      double yP,
+      double yMaxSpeed) {
+    this(
+        driveSubsystem,
+        targetX,
+        targetY,
+        targetAngle,
+        0.1,
+        2.0,
+        isContinuous,
+        xP,
+        xMaxSpeed,
+        yP,
+        yMaxSpeed);
+  }
+
+  /**
+   * Precise-stop constructor with custom tolerances and per-command translation PID/speed tuning.
+   */
+  public DriveToPoint(
+      DriveSubsystem driveSubsystem,
+      double targetX,
+      double targetY,
+      double targetAngle,
+      double positionTolerance,
+      double angleTolerance,
+      double xP,
+      double xMaxSpeed,
+      double yP,
+      double yMaxSpeed) {
+    this(
+        driveSubsystem,
+        targetX,
+        targetY,
+        targetAngle,
+        positionTolerance,
+        angleTolerance,
+        false,
+        xP,
+        xMaxSpeed,
+        yP,
+        yMaxSpeed);
+  }
+
+  /**
+   * Precise-stop constructor with per-command translation PID/speed tuning.
+   */
+  public DriveToPoint(
+      DriveSubsystem driveSubsystem,
+      double targetX,
+      double targetY,
+      double targetAngle,
+      double xP,
+      double xMaxSpeed,
+      double yP,
+      double yMaxSpeed) {
+    this(
+        driveSubsystem,
+        targetX,
+        targetY,
+        targetAngle,
+        0.1,
+        2.0,
+        false,
+        xP,
+        xMaxSpeed,
+        yP,
+        yMaxSpeed);
+  }
+
+  /**
+   * Precise-stop constructor with custom tolerances.
+   */
+  public DriveToPoint(
+      DriveSubsystem driveSubsystem,
+      double targetX,
+      double targetY,
+      double targetAngle,
+      double positionTolerance,
+      double angleTolerance) {
+    this(driveSubsystem, targetX, targetY, targetAngle, positionTolerance, angleTolerance, false);
+  }
+
 
   /**
    * Constructor with default tolerances.

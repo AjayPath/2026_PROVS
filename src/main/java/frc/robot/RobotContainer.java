@@ -9,16 +9,21 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.DriveToPoint;
 import frc.robot.commands.PassSequence;
 import frc.robot.commands.Purge;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.SetPivotPosition;
 import frc.robot.commands.ShootAndMoveSequence;
+import frc.robot.commands.ShootSequence;
 import frc.robot.commands.StaticShootSequence;
 import frc.robot.subsystems.DataLog;
 import frc.robot.subsystems.DriveSubsystem;
@@ -39,10 +44,12 @@ import frc.robot.utils.Pose;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  private static final String RED_ALLIANCE = "Red";
-  private static final String BLUE_ALLIANCE = "Blue";
   private static final String RED_HUB = "Red Hub";
   private static final String BLUE_HUB = "Blue Hub";
+  private static final String START_HEADING_NORTH = "North (0)";
+  private static final String START_HEADING_EAST = "East (270)";
+  private static final String START_HEADING_SOUTH = "South (180)";
+  private static final String START_HEADING_WEST = "West (90)";
 
   /// The robot's subsystems and commands are defined here...
   public final DriveSubsystem m_robotDrive = new DriveSubsystem();
@@ -53,7 +60,7 @@ public class RobotContainer {
   private final PivotSubsystem s_pivotSubsystem = new PivotSubsystem();
   //public final LimelightSubsystem m_limelight = new LimelightSubsystem();
   public final DataLog m_datalog = new DataLog();
-  private final SendableChooser<String> m_allianceChooser = new SendableChooser<>();
+  private final SendableChooser<String> m_startHeadingChooser = new SendableChooser<>();
   private static final SendableChooser<String> m_turnTargetChooser = new SendableChooser<>();
 
   //private final PoseManager m_poseManager = new PoseManager(m_robotDrive);
@@ -78,14 +85,16 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                false),
+                true),
             m_robotDrive));
   }
 
   private void configureDashboard() {
-    m_allianceChooser.setDefaultOption(RED_ALLIANCE, RED_ALLIANCE);
-    m_allianceChooser.addOption(BLUE_ALLIANCE, BLUE_ALLIANCE);
-    SmartDashboard.putData("Alliance Start", m_allianceChooser);
+    m_startHeadingChooser.setDefaultOption(START_HEADING_EAST, START_HEADING_EAST);
+    m_startHeadingChooser.addOption(START_HEADING_NORTH, START_HEADING_NORTH);
+    m_startHeadingChooser.addOption(START_HEADING_SOUTH, START_HEADING_SOUTH);
+    m_startHeadingChooser.addOption(START_HEADING_WEST, START_HEADING_WEST);
+    SmartDashboard.putData("Start Heading", m_startHeadingChooser);
 
     m_turnTargetChooser.setDefaultOption(RED_HUB, RED_HUB);
     m_turnTargetChooser.addOption(BLUE_HUB, BLUE_HUB);
@@ -126,6 +135,39 @@ public class RobotContainer {
       new Trigger(m_driverController::getLeftBumperButton)
       .whileTrue(new SetPivotPosition(s_pivotSubsystem, 10));
 
+    new Trigger(m_driverController::getXButton)
+      .whileTrue(
+        new SequentialCommandGroup(
+          new ParallelDeadlineGroup(
+            new DriveToPoint(m_robotDrive, -10.4, -7.3, 90, 0.35, 0.02, true, 1, 1.15, 1, 1.15), 
+            new SequentialCommandGroup(
+              new WaitCommand(0.5),
+              new SetPivotPosition(s_pivotSubsystem, 108))
+            ),
+          
+          new ParallelDeadlineGroup(
+            new DriveToPoint(m_robotDrive, -9.4, -5, 90, 0.1, 0.02, true, 0.8, 0.65, 0.8, 0.65),
+            new RunIntake(s_intakeSubsystem, s_pivotSubsystem, 93, 108)),
+          new DriveToPoint(m_robotDrive, -10.4, -5.75, 135, 0.25, 0.02, true, 0.8, 0.4, 0.8, 0.4),
+          new DriveToPoint(m_robotDrive, -13.4, -5.75, 135, 0.25, 0.02, true, 0.8, 0.4, 0.8, 0.4),
+          new ShootSequence(s_shooterSubsystem, s_feederSubsystem, s_floorSubsystem, m_robotDrive, s_intakeSubsystem, s_pivotSubsystem).withTimeout(3.5),
+          new ParallelDeadlineGroup(
+            new DriveToPoint(m_robotDrive, -13.5, -7.3, 90, 0.1, 0.02, true, 0.8, 0.45, 0.8, 0.45),
+              new SetPivotPosition(s_pivotSubsystem, 0)),
+        new ParallelDeadlineGroup(
+          new DriveToPoint(m_robotDrive, -10.7, -7.3, 90, 0.25, 0.02, true, 1, 1.35, 1, 1.35), 
+          new SequentialCommandGroup(
+              new WaitCommand(1),
+              new SetPivotPosition(s_pivotSubsystem, 0))
+            ),
+        new ParallelDeadlineGroup(
+          new DriveToPoint(m_robotDrive, -10.7, -5, 90, 0.1, 0.02, true, 0.8, 0.85, 0.8, 0.85), 
+           new RunIntake(s_intakeSubsystem, s_pivotSubsystem, 93, 108)),
+        new DriveToPoint(m_robotDrive, -10.7, -5.75, 135, 0.25, 0.02, true, 0.8, 0.4, 0.8, 0.4),
+        new DriveToPoint(m_robotDrive, -13.5, -5.75, 135, 0.25, 0.02, true, 0.8, 0.4, 0.8, 0.4),
+        new ShootSequence(s_shooterSubsystem, s_feederSubsystem, s_floorSubsystem, m_robotDrive, s_intakeSubsystem, s_pivotSubsystem).withTimeout(3.5)
+      ));
+
   }
 
 /**
@@ -143,8 +185,22 @@ public class RobotContainer {
   }
 
   public double getSelectedStartingHeadingDeg() {
-    String alliance = m_allianceChooser.getSelected();
-    return BLUE_ALLIANCE.equals(alliance) ? 180.0 : 0.0;
+    String selectedStartHeading = m_startHeadingChooser.getSelected();
+
+    if (START_HEADING_NORTH.equals(selectedStartHeading)) {
+      return 0.0;
+    }
+    if (START_HEADING_EAST.equals(selectedStartHeading)) {
+      return 270.0;
+    }
+    if (START_HEADING_SOUTH.equals(selectedStartHeading)) {
+      return 180.0;
+    }
+    if (START_HEADING_WEST.equals(selectedStartHeading)) {
+      return 90.0;
+    }
+
+    return 270.0;
   }
 
   public static String getSelectedTurnTargetName() {
