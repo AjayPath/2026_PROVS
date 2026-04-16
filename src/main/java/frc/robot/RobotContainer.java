@@ -46,10 +46,10 @@ import frc.robot.utils.Pose;
 public class RobotContainer {
   private static final String RED_HUB = "Red Hub";
   private static final String BLUE_HUB = "Blue Hub";
-  private static final String START_HEADING_NORTH = "North (0)";
-  private static final String START_HEADING_EAST = "East (270)";
-  private static final String START_HEADING_SOUTH = "South (180)";
-  private static final String START_HEADING_WEST = "West (90)";
+  private static final String START_HEADING_RED_LEFT = "Red Left (270)";
+  private static final String START_HEADING_RED_RIGHT = "Red Right (90)";
+  private static final String START_HEADING_BLUE_LEFT = "Blue Left (90)";
+  private static final String START_HEADING_BLUE_RIGHT = "Blue Right (270)";
 
   /// The robot's subsystems and commands are defined here...
   public final DriveSubsystem m_robotDrive = new DriveSubsystem();
@@ -82,18 +82,24 @@ public class RobotContainer {
         // Turning is controlled by the X axis of the right stick.
         new RunCommand(
             () -> m_robotDrive.drive(
-                -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(
+                    getAllianceAdjustedDriverAxis(m_driverController.getLeftY()),
+                    OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(
+                    getAllianceAdjustedDriverAxis(m_driverController.getLeftX()),
+                    OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(
+                    m_driverController.getRightX(),
+                    OIConstants.kDriveDeadband),
                 true),
             m_robotDrive));
   }
 
   private void configureDashboard() {
-    m_startHeadingChooser.setDefaultOption(START_HEADING_EAST, START_HEADING_EAST);
-    m_startHeadingChooser.addOption(START_HEADING_NORTH, START_HEADING_NORTH);
-    m_startHeadingChooser.addOption(START_HEADING_SOUTH, START_HEADING_SOUTH);
-    m_startHeadingChooser.addOption(START_HEADING_WEST, START_HEADING_WEST);
+    m_startHeadingChooser.setDefaultOption(START_HEADING_RED_LEFT, START_HEADING_RED_LEFT);
+    m_startHeadingChooser.addOption(START_HEADING_RED_RIGHT, START_HEADING_RED_RIGHT);
+    m_startHeadingChooser.addOption(START_HEADING_BLUE_LEFT, START_HEADING_BLUE_LEFT);
+    m_startHeadingChooser.addOption(START_HEADING_BLUE_RIGHT, START_HEADING_BLUE_RIGHT);
     SmartDashboard.putData("Start Heading", m_startHeadingChooser);
 
     m_turnTargetChooser.setDefaultOption(RED_HUB, RED_HUB);
@@ -117,11 +123,12 @@ public class RobotContainer {
           m_robotDrive,
           s_intakeSubsystem,
           s_pivotSubsystem,
-          m_driverController::getLeftY,
-          m_driverController::getLeftX));
+          () -> getAllianceAdjustedDriverAxis(m_driverController.getLeftY()),
+          () -> getAllianceAdjustedDriverAxis(m_driverController.getLeftX())));
 
       new Trigger(m_driverController::getRightBumperButton)
-      .whileTrue(new PassSequence(s_shooterSubsystem, s_feederSubsystem, s_floorSubsystem, m_robotDrive, s_intakeSubsystem, s_pivotSubsystem, 90));
+      .whileTrue(new PassSequence(s_shooterSubsystem, s_feederSubsystem, s_floorSubsystem, m_robotDrive, s_intakeSubsystem, s_pivotSubsystem, 90,
+          () -> isBlueStartHeadingSelected() ? 0.0 : 180.0));
 
      new Trigger(m_driverController::getYButton)
       .whileTrue(new Purge(s_feederSubsystem, s_shooterSubsystem, s_intakeSubsystem, s_floorSubsystem));
@@ -187,20 +194,30 @@ public class RobotContainer {
   public double getSelectedStartingHeadingDeg() {
     String selectedStartHeading = m_startHeadingChooser.getSelected();
 
-    if (START_HEADING_NORTH.equals(selectedStartHeading)) {
-      return 0.0;
-    }
-    if (START_HEADING_EAST.equals(selectedStartHeading)) {
+    if (START_HEADING_RED_LEFT.equals(selectedStartHeading)) {
       return 270.0;
     }
-    if (START_HEADING_SOUTH.equals(selectedStartHeading)) {
-      return 180.0;
-    }
-    if (START_HEADING_WEST.equals(selectedStartHeading)) {
+    if (START_HEADING_RED_RIGHT.equals(selectedStartHeading)) {
       return 90.0;
+    }
+    if (START_HEADING_BLUE_LEFT.equals(selectedStartHeading)) {
+      return 90.0;
+    }
+    if (START_HEADING_BLUE_RIGHT.equals(selectedStartHeading)) {
+      return 270.0;
     }
 
     return 270.0;
+  }
+
+  private double getAllianceAdjustedDriverAxis(double axisValue) {
+    return isBlueStartHeadingSelected() ? -axisValue : axisValue;
+  }
+
+  private boolean isBlueStartHeadingSelected() {
+    String selectedStartHeading = m_startHeadingChooser.getSelected();
+    return START_HEADING_BLUE_LEFT.equals(selectedStartHeading)
+        || START_HEADING_BLUE_RIGHT.equals(selectedStartHeading);
   }
 
   public static String getSelectedTurnTargetName() {

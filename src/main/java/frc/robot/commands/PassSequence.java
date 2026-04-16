@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -18,12 +20,13 @@ public class PassSequence extends SequentialCommandGroup {
       DriveSubsystem drive,
       IntakeSubsystem intake,
       PivotSubsystem pivot,
-      double shooterRPS
+      double shooterRPS,
+      DoubleSupplier passTurnAngleSupplier
   ) {
     addCommands(
 
     new ParallelCommandGroup(
-      new TurnToAngle(drive, 180),
+      new TurnToAngle(drive, passTurnAngleSupplier, 2.0),
 
         new ParallelCommandGroup(
           // Shooter runs the entire time, never interrupted
