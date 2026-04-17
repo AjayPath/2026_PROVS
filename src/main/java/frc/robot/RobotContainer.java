@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -131,6 +132,9 @@ public class RobotContainer {
     new Trigger(m_driverController::getYButton)
         .whileTrue(new Purge(s_feederSubsystem, s_shooterSubsystem, s_intakeSubsystem, s_floorSubsystem));
 
+    new Trigger(m_driverController::getXButton)
+        .onTrue(new InstantCommand(m_robotDrive::resetGyro, m_robotDrive));
+
     new Trigger(m_driverController::getAButton)
         .whileTrue(
             new StaticShootSequence(
@@ -141,8 +145,13 @@ public class RobotContainer {
                 s_intakeSubsystem,
                 s_pivotSubsystem));
 
+    new Trigger(m_driverController::getStartButton)
+      .whileTrue(
+          new RunCommand(
+              () -> m_robotDrive.setGyroYaw(autoSelector.isBlueSelected() ? 180.0 : 0.0)));
+
     new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.2)
-        .whileTrue(new RunIntake(s_intakeSubsystem, s_pivotSubsystem, 85, 114));
+        .whileTrue(new RunIntake(s_intakeSubsystem, s_pivotSubsystem, 85, 140));
 
     new Trigger(m_driverController::getLeftBumperButton)
         .whileTrue(new SetPivotPosition(s_pivotSubsystem, 10));
@@ -163,6 +172,14 @@ public class RobotContainer {
 
   public double getSelectedStartingHeadingDeg() {
     return autoSelector.getSelectedStartingHeadingDeg();
+  }
+
+  public double getSelectedStartingX() {
+    return autoSelector.getSelectedStartingX();
+  }
+
+  public double getSelectedStartingY() {
+    return autoSelector.getSelectedStartingY();
   }
 
   private double getAllianceAdjustedDriverAxis(double axisValue) {

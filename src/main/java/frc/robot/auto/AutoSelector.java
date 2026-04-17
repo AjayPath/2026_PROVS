@@ -30,6 +30,14 @@ public class AutoSelector {
     return getSelectedMode().getStartingHeadingDeg();
   }
 
+  public double getSelectedStartingX() {
+    return getSelectedMode().getStartingX();
+  }
+
+  public double getSelectedStartingY() {
+    return getSelectedMode().getStartingY();
+  }
+
   public boolean isBlueSelected() {
     return getSelectedMode().isBlueAlliance();
   }

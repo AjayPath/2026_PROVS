@@ -50,22 +50,22 @@ public class AutoRoutines {
   private Command buildRedRightAuto() {
     return new SequentialCommandGroup(
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -10.4, -7.3, 90, 0.35, 0.02, true, 1, 1.15, 1, 1.15),
+            new DriveToPoint(robotDrive, -9.4, -7.3, 90, 0.25, 0.02, true, 1, 1.35, 1, 1.35),
             new SequentialCommandGroup(
-                new WaitCommand(0.5),
-                new SetPivotPosition(pivotSubsystem, 108))),
+                new WaitCommand(0.4),
+                new SetPivotPosition(pivotSubsystem, 140))),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -9.4, -5, 90, 0.1, 0.02, true, 0.8, 0.65, 0.8, 0.65),
-            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 108)),
+            new DriveToPoint(robotDrive, -8.4, -4.5, 90, 0.1, 0.02, true, 0.8, 0.65, 0.8, 0.65),
+            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 140)),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -10.4, -5.75, 135, 0.25, 0.02, true, 0.8, 0.4, 0.8, 0.4),
-            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 108)),
+            new DriveToPoint(robotDrive, -10, -5.625, 135, 0.15, 0.02, true, 0.8, 0.8, 0.8, 0.8),
+            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 140)),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -13.4, -5.75, 135, 0.25, 0.02, true, 0.8, 0.4, 0.8, 0.4),
-            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 108)),
+            new DriveToPoint(robotDrive, -13.5, -5.625, 135, 0.25, 0.02, true, 0.8, 0.65, 0.8, 0.65),
+            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 140)),
 
         new ShootSequence(
             shooterSubsystem,
@@ -76,26 +76,26 @@ public class AutoRoutines {
             pivotSubsystem).withTimeout(3.5),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -13.5, -7.3, 90, 0.1, 0.02, true, 0.8, 0.45, 0.8, 0.45),
+            new DriveToPoint(robotDrive, -13.5, -7.3, 90, 0.1, 0.02, true, 0.8, 0.65, 0.8, 0.65),
             new SetPivotPosition(pivotSubsystem, 0)),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -10.7, -7.3, 90, 0.25, 0.02, true, 1, 1.35, 1, 1.35),
+            new DriveToPoint(robotDrive, -9.4, -7.3, 90, 0.25, 0.02, true, 1, 1.35, 1, 1.35),
             new SequentialCommandGroup(
                 new WaitCommand(1),
                 new SetPivotPosition(pivotSubsystem, 0))),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -10.7, -5, 90, 0.1, 0.02, true, 0.8, 0.85, 0.8, 0.85),
-            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 108)),
+            new DriveToPoint(robotDrive, -9.4, -4.5, 90, 0.1, 0.02, true, 0.8, 0.85, 0.8, 0.85),
+            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 140)),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -10.7, -5.75, 135, 0.25, 0.02, true, 0.8, 0.4, 0.8, 0.4),
-            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 108)),
+            new DriveToPoint(robotDrive, -9.4, -5.625, 135, 0.5, 0.02, true, 0.8, 0.8, 0.8, 0.8),
+            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 140)),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -13.5, -5.75, 135, 0.25, 0.02, true, 0.8, 0.4, 0.8, 0.4),
-            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 108)),
+            new DriveToPoint(robotDrive, -13.5, 5.625, 135, 0.25, 0.02, true, 0.8, 0.65, 0.8, 0.65),
+            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 140)),
 
         new ShootSequence(
             shooterSubsystem,
@@ -109,22 +109,22 @@ public class AutoRoutines {
   private Command buildRedLeftAuto() {
     return new SequentialCommandGroup(
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -10.4, -0.6, 270, 0.35, 0.02, true, 1, 1.15, 1, 1.15),
+            new DriveToPoint(robotDrive, -9.4, -0.6, 270, 0.25, 0.02, true, 1, 1.35, 1, 1.35),
             new SequentialCommandGroup(
-                new WaitCommand(0.5),
-                new SetPivotPosition(pivotSubsystem, 108))),
+                new WaitCommand(0.4),
+                new SetPivotPosition(pivotSubsystem, 140))),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -9.4, -4, 270, 0.1, 0.02, true, 0.8, 0.65, 0.8, 0.65),
-            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 108)),
+            new DriveToPoint(robotDrive, -8.4, -4.5, 270, 0.1, 0.02, true, 0.8, 0.65, 0.8, 0.65),
+            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 140)),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -10.4, -2.5, 225, 0.5, 0.02, true, 0.8, 0.8, 0.8, 0.8),
-            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 108)),
+            new DriveToPoint(robotDrive, -10, -2.5, 215, 0.15, 0.02, true, 0.8, 0.8, 0.8, 0.8),
+            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 140)),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -13.5, -2.5, 225, 0.25, 0.02, true, 0.8, 0.4, 0.8, 0.4),
-            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 108)),
+            new DriveToPoint(robotDrive, -13.5, -2.5, 215, 0.25, 0.02, true, 0.8, 0.65, 0.8, 0.65),
+            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 140)),
 
         new ShootSequence(
             shooterSubsystem,
@@ -135,26 +135,26 @@ public class AutoRoutines {
             pivotSubsystem).withTimeout(3.5),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -13.5, -0.6, 270, 0.1, 0.02, true, 0.8, 0.45, 0.8, 0.45),
+            new DriveToPoint(robotDrive, -13.5, -0.6, 270, 0.1, 0.02, true, 0.8, 0.65, 0.8, 0.65),
             new SetPivotPosition(pivotSubsystem, 0)),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -10.7, -0.6, 270, 0.25, 0.02, true, 1, 1.35, 1, 1.35),
+            new DriveToPoint(robotDrive, -9.4, -0.6, 270, 0.25, 0.02, true, 1, 1.35, 1, 1.35),
             new SequentialCommandGroup(
                 new WaitCommand(1),
                 new SetPivotPosition(pivotSubsystem, 0))),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -10.7, -4, 270, 0.1, 0.02, true, 0.8, 0.85, 0.8, 0.85),
-            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 108)),
+            new DriveToPoint(robotDrive, -9.4, -4, 270, 0.1, 0.02, true, 0.8, 0.85, 0.8, 0.85),
+            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 140)),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -10.4, -2.5, 225, 0.5, 0.02, true, 0.8, 0.8, 0.8, 0.8),
-            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 108)),
+            new DriveToPoint(robotDrive, -9.4, -2.5, 225, 0.5, 0.02, true, 0.8, 0.8, 0.8, 0.8),
+            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 140)),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -13.5, -2.5, 225, 0.25, 0.02, true, 0.8, 0.4, 0.8, 0.4),
-            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 108)),
+            new DriveToPoint(robotDrive, -13.5, -2.5, 225, 0.25, 0.02, true, 0.8, 0.65, 0.8, 0.65),
+            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 140)),
 
         new ShootSequence(
             shooterSubsystem,
@@ -168,22 +168,22 @@ public class AutoRoutines {
   private Command buildBlueRightAuto() {
     return new SequentialCommandGroup(
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -6.2, -0.6, 270, 0.35, 0.02, true, 1, 0.5, 1, 0.5),
+            new DriveToPoint(robotDrive, -7.4, -0.65, 270, 0.25, 0.02, true, 1, 1.35, 1, 1.35),
             new SequentialCommandGroup(
-                new WaitCommand(0.5),
-                new SetPivotPosition(pivotSubsystem, 108))),
+                new WaitCommand(0.4),
+                new SetPivotPosition(pivotSubsystem, 140))),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -7.2, -4, 270, 0.1, 0.02, true, 0.8, 0.65, 0.8, 0.65),
-            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 108)),
+            new DriveToPoint(robotDrive, -8.4, -4.5, 270, 0.1, 0.02, true, 0.8, 0.65, 0.8, 0.65),
+            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 140)),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -6, -2.5, 225, 0.5, 0.02, true, 0.8, 0.5, 0.8, 0.5),
-            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 108)),
+            new DriveToPoint(robotDrive, -6.8, -2.5, 315, 0.15, 0.02, true, 0.8, 0.8, 0.8, 0.8),
+            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 140)),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -3.5, -2.5, 225, 0.25, 0.02, true, 0.8, 0.4, 0.8, 0.4),
-            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 108)),
+            new DriveToPoint(robotDrive, -3.1, -2.5, 315, 0.25, 0.02, true, 0.8, 0.65, 0.8, 0.65),
+            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 140)),
 
         new ShootSequence(
             shooterSubsystem,
@@ -194,26 +194,26 @@ public class AutoRoutines {
             pivotSubsystem).withTimeout(3.5),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -3.5, -0.6, 270, 0.1, 0.02, true, 0.8, 0.45, 0.8, 0.45),
+            new DriveToPoint(robotDrive, -3.1, -0.65, 270, 0.1, 0.02, true, 0.8, 0.65, 0.8, 0.65),
             new SetPivotPosition(pivotSubsystem, 0)),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -6.2, -0.6, 270, 0.25, 0.02, true, 1, 0.5, 1, 0.5),
+            new DriveToPoint(robotDrive, -7.4, -0.65, 270, 0.25, 0.02, true, 1, 1.35, 1, 1.35),
             new SequentialCommandGroup(
                 new WaitCommand(1),
                 new SetPivotPosition(pivotSubsystem, 0))),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -6.2, -4, 270, 0.1, 0.02, true, 0.8, 0.5, 0.8, 0.5),
-            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 108)),
+            new DriveToPoint(robotDrive, -7.4, -4.5, 270, 0.1, 0.02, true, 0.8, 0.85, 0.8, 0.85),
+            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 140)),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -6, -2.5, 225, 0.5, 0.02, true, 0.8, 0.5, 0.8, 0.5),
-            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 108)),
+            new DriveToPoint(robotDrive, -7.4, -2.5, 315, 0.5, 0.02, true, 0.8, 0.8, 0.8, 0.8),
+            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 140)),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -3.5, -2.5, 225, 0.25, 0.02, true, 0.8, 0.4, 0.8, 0.4),
-            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 108)),
+            new DriveToPoint(robotDrive, -3.1, -2.5, 315, 0.25, 0.02, true, 0.8, 0.65, 0.8, 0.65),
+            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 140)),
 
         new ShootSequence(
             shooterSubsystem,
@@ -227,22 +227,22 @@ public class AutoRoutines {
   private Command buildBlueLeftAuto() {
     return new SequentialCommandGroup(
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -6, -7.45, 90, 0.35, 0.02, true, 1, 0.5, 1, 0.5),
+            new DriveToPoint(robotDrive, -7.4, -7.3, 90, 0.25, 0.02, true, 1, 1.35, 1, 1.35),
             new SequentialCommandGroup(
                 new WaitCommand(0.5),
-                new SetPivotPosition(pivotSubsystem, 108))),
+                new SetPivotPosition(pivotSubsystem, 140))),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -7, -4.3, 90, 0.1, 0.02, true, 0.8, 0.45, 0.8, 0.45),
-            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 108)),
+            new DriveToPoint(robotDrive, -8.4, -4.5, 90, 0.1, 0.02, true, 0.8, 0.65, 0.8, 0.65),
+            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 140)),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -5, -5.35, 35, 0.1, 0.02, true, 0.8, 0.4, 0.8, 0.4),
-            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 108)),
+            new DriveToPoint(robotDrive, -6.8, -5.625, 35, 0.1, 0.02, true, 0.8, 0.8, 0.8, 0.8),
+            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 140)),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -2.5, -5.35, 35, 0.1, 0.02, true, 0.8, 0.5, 0.8, 0.5),
-            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 108)),
+            new DriveToPoint(robotDrive, -3.1, -5.625, 35, 0.1, 0.02, true, 0.8, 0.65, 0.8, 0.65),
+            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 140)),
 
         new ShootSequence(
             shooterSubsystem,
@@ -253,26 +253,26 @@ public class AutoRoutines {
             pivotSubsystem).withTimeout(3.5),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -2.5, -7.45, 90, 0.1, 0.02, true, 0.8, 0.45, 0.8, 0.45),
+            new DriveToPoint(robotDrive, -3.1, -7.4, 90, 0.1, 0.02, true, 0.8, 0.65, 0.8, 0.65),
             new SetPivotPosition(pivotSubsystem, 0)),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -6.5, -7.3, 90, 0.1, 0.02, true, 1, 1.35, 1, 1.35),
+            new DriveToPoint(robotDrive, -7.4, -7.3, 90, 0.1, 0.02, true, 1, 1.35, 1, 1.35),
             new SequentialCommandGroup(
                 new WaitCommand(1),
                 new SetPivotPosition(pivotSubsystem, 0))),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -6.5, -4, 90, 0.1, 0.02, true, 0.8, 0.85, 0.8, 0.85),
-            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 108)),
+            new DriveToPoint(robotDrive, -7.4, -4.5, 90, 0.1, 0.02, true, 0.8, 0.85, 0.8, 0.85),
+            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 140)),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -6.5, -5.35, 35, 0.25, 0.02, true, 0.8, 0.4, 0.8, 0.4),
-            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 108)),
+            new DriveToPoint(robotDrive, -7.4, -5.625, 35, 0.25, 0.02, true, 0.8, 0.65, 0.8, 0.65),
+            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 140)),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -2.5, -5.35, 35, 0.25, 0.02, true, 0.8, 0.5, 0.8, 0.5),
-            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 108)),
+            new DriveToPoint(robotDrive, -3.1, -5.625, 35, 0.25, 0.02, true, 0.8, 0.65, 0.8, 0.65),
+            new RunIntake(intakeSubsystem, pivotSubsystem, 93, 140)),
 
         new ShootSequence(
             shooterSubsystem,

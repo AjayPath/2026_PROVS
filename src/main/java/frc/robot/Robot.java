@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.utils.LimelightHelpers;
+import frc.robot.utils.Pose;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -21,7 +22,6 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
-  private Double lastAppliedStartingHeadingDeg = null;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -91,12 +91,12 @@ public void robotPeriodic() {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    applyDashboardStartingHeading();
+    applyDashboardStartingPose();
   }
 
   @Override
   public void disabledPeriodic() {
-    applyDashboardStartingHeading();
+    applyDashboardStartingPose();
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
@@ -159,22 +159,18 @@ public void robotPeriodic() {
 
       // initialize only, do not zero yaw here
       drive.initializeGyro();
-      applyDashboardStartingHeading();
+      applyDashboardStartingPose();
   }).start();
 }
 
-  private void applyDashboardStartingHeading() {
+  private void applyDashboardStartingPose() {
     double selectedHeadingDeg = m_robotContainer.getSelectedStartingHeadingDeg();
-
-    if (lastAppliedStartingHeadingDeg != null
-        && Double.compare(lastAppliedStartingHeadingDeg, selectedHeadingDeg) == 0) {
-      return;
-    }
+    double selectedX = m_robotContainer.getSelectedStartingX();
+    double selectedY = m_robotContainer.getSelectedStartingY();
 
     DriveSubsystem drive = m_robotContainer.getDriveSubsystem();
     drive.setGyroYaw(selectedHeadingDeg);
-    drive.resetToOrigin();
-    lastAppliedStartingHeadingDeg = selectedHeadingDeg;
+    drive.setPose(new Pose(selectedX, selectedY, selectedHeadingDeg));
   }
   
 }
