@@ -94,7 +94,7 @@ public class AutoRoutines {
             new RunIntake(intakeSubsystem, pivotSubsystem, 93, 140)),
 
         new ParallelDeadlineGroup(
-            new DriveToPoint(robotDrive, -13.5, 5.625, 135, 0.25, 0.02, true, 0.8, 0.65, 0.8, 0.65),
+            new DriveToPoint(robotDrive, -13.5, -5.625, 135, 0.25, 0.02, true, 0.8, 0.65, 0.8, 0.65),
             new RunIntake(intakeSubsystem, pivotSubsystem, 93, 140)),
 
         new ShootSequence(

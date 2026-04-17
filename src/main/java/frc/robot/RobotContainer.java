@@ -127,7 +127,7 @@ public class RobotContainer {
                 s_intakeSubsystem,
                 s_pivotSubsystem,
                 90,
-                () -> autoSelector.isBlueSelected() ? 0.0 : 180.0));
+                () -> autoSelector.isBlueSelected() ? 180.0 : 0.0));
 
     new Trigger(m_driverController::getYButton)
         .whileTrue(new Purge(s_feederSubsystem, s_shooterSubsystem, s_intakeSubsystem, s_floorSubsystem));
